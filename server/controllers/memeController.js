@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import Comment from "../models/Comment.js";
 
 export const newMeme = async (req, res) => {
+  blocking
   const { id, title, meme } = req.body;
   try {
     const user = await User.findById(id);
@@ -33,6 +34,7 @@ export const getMemes = async (req, res) => {
 };
 
 export const getOneById = async (req, res) => {
+  console.log(req.params);
   const id = req.params.id;
   console.log(req.params);
   try {

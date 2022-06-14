@@ -2,8 +2,7 @@
   import CommentVoteBar from "./CommentVoteBar.svelte";
   import SubCommentCard from "./SubCommentCard.svelte";
   export let comment;
-  export let user;
-  export let subComments
+  export let user; 
   
   let startIndex = comment.subComments.subComments.length
   let endIndex = comment.subComments.subComments.length 
@@ -57,7 +56,7 @@
   a {
     font-size: 12px;
   }
-  a:hover {
+  A:hover {
     background-color: aliceblue;
   }
   .comment-wrapper {

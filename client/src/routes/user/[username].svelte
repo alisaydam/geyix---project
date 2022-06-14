@@ -1,7 +1,8 @@
 <script context="module">
   export async function load({ params }) {
+    // console.log(params.username);
     const getUser = await fetch(
-      `http://localhost:5000/user/${params.username}`
+      `https://geyix.herokuapp.com/user/getOne/${params.username}`
     );
     const user = await getUser.json();
     return {
@@ -19,6 +20,8 @@
   import MemeCard from "$lib/MemeCard.svelte";
   export let username;
   export let user;
+  let current = "active";
+
   let page = 0;
   let data = [];
   let newBatch = [];
@@ -27,7 +30,7 @@
   const fetchUserMemes = async () => {
     try {
       const getMemes = await fetch(
-        `http://localhost:5000/meme/getUserMemes?username=${username}&section=${section}&page=${page}&limit=5`
+        `https://geyix.herokuapp.com/meme/getUserMemes?username=${username}&section=${section}&page=${page}&limit=5`
       );
       newBatch = await getMemes.json();
       console.log(data);
@@ -49,26 +52,36 @@
     <h5>@{user.username}</h5>
   </div>
 </div>
-<div class="sections">
-  <button
-    on:click={() => {
+<div class="tab-bar">
+  <ul class="menu">
+    <!-- svelte-ignore a11y-missing-attribute -->
+    <li><a class:active={current === "postlar"} on:click={() => {
+      current="postlar"
       newBatch = [];
       data = [];
       page = 0;
       section = "posts";
       fetchUserMemes();
-    }}>Gönderiler</button
-  >
-  <button
-    on:click={() => {
+    }}>Postlar</a></li>
+    <!-- svelte-ignore a11y-missing-attribute -->
+    <li><a class:active={current==="yorum"} on:click={()=> {
+      current = "yorum"
+    }} >Yorum</a></li>
+    <!-- svelte-ignore a11y-missing-attribute -->
+    <li><a class:active={current==="begen"} on:click={() => {
+      current = "begen"
       newBatch = [];
       data = [];
       page = 0;
       section = "liked";
       fetchUserMemes();
-    }}>Beğeniler</button
-  >
-</div>
+    }}>Beğeniler</a></li>
+    <!-- svelte-ignore a11y-missing-attribute -->
+    <li><a class:active={current === "kaydet"} on:click={()=> {
+      current = "kaydet"
+    }}>Kaydedilenler</a></li>
+  </ul>
+</div> 
 
 <ul>
   {#each data as meme}
@@ -84,36 +97,53 @@
   />
 </ul>
 
+{#if newBatch.length === 0}
+ <p>
+   Burada görecek bir şey yok.
+ </p>
+{/if}
 <style>
-  button {
-    border: 1px solid inherit;
-    border-radius: 5px;
-    padding: 2px;
-    width: 80px;
-    cursor: pointer;
+ p{
+    text-align: center;
   }
   .user {
     display: flex;
-    max-width: 650px;
     margin: auto;
     height: 100px;
   }
   .user-info {
     margin: auto 0;
   }
-  .sections {
-    max-width: 650px;
-    margin: 10px auto;
+  .tab-bar {
+    box-shadow: inset 0 -1px 0 rgba(1, 1, 1, 0.2);
+    margin-top: 12px;
+  }
+  .menu {
+    display: flex;
+  }
+  a {
+    font-weight: 700;
+    display: block;
+    box-sizing: border-box;
+    line-height: 20px;
+    height: 40px;
+    padding: 10px 16px;
+  }
+  a:hover {
+    background-color: rgba(172, 168, 168, 0.5);
+  }
+  .active {  
+    border-bottom: 2px solid;
   }
   ul {
     padding: 0;
     overflow-x: hidden;
     /* box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
       0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12); */
-    max-height: 100vh;
     max-width: 600px;
-    margin: auto;
+    max-height: 100vh; 
   }
+
   ul::-webkit-scrollbar {
     display: none;
   }

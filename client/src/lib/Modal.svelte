@@ -20,7 +20,7 @@ on:keydown={e => {
 }}
 />
 {#if $shown}
-  <div class="modal-wrapper">
+  <div class="modal-wrapper" on:click={()=>hide()}>
       <div class="modal" on:click|stopPropagation>
           <button class="close-modal" on:click={()=>hide()}>X</button>
           <slot />

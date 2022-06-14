@@ -11,20 +11,22 @@
   } from "firebase/storage";
   import { user } from "../../stores";
   const firebaseConfig = {
-    apiKey: "AIzaSyBP8sZ78cKyQkMFYvxaSkP7jraJqw6S5Oo",
-    authDomain: "geyix-4a345.firebaseapp.com",
-    projectId: "geyix-4a345",
-    storageBucket: "geyix-4a345.appspot.com",
-    messagingSenderId: "864445954669",
-    appId: "1:864445954669:web:a91f90589e005c7c035d64",
-    measurementId: "G-FQ30MM7C9H",
+    apiKey: import.meta.env.VITE_FIREBASE_APIKEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
   };
 
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const storage = getStorage(app);
 
-  let avatar, fileinput, image, title;
+  let avatar,
+    image,
+    title = "";
   let spinner = false;
   const uploadToFireStorage = () => {
     const metadata = {
@@ -45,16 +47,20 @@
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then(async (dowloadURL) => {
+          console.log(dowloadURL);
           try {
-            const submit = await fetch("http://localhost:5000/meme/newmeme", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                meme: dowloadURL,
-                id: $user._id,
-                title: title,
-              }),
-            });
+            const submit = await fetch(
+              "https://geyix.herokuapp.com/meme/newmeme",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  meme: dowloadURL,
+                  id: $user._id,
+                  title: title,
+                }),
+              }
+            );
             spinner = false;
             avatar = "";
             title = "";
@@ -84,109 +90,216 @@
   };
 </script>
 
-<div id="app">
-  <div class="preview">
-    <h2>Meme Yükle</h2>
-    <input class="title" type="text" bind:value={title} placeholder="Başlık" />
-    {#if spinner}
-      <div class="spinner">
-        <Circle3 size="75" color="#FF3E00" unit="px" duration="1.5s" />
-      </div>
-    {/if}
-    {#if avatar}
-      <img class="avatar" src={avatar} alt="d" />
-    {:else}
-      <img class="avatar" src="/placeholder.png" alt="" />
-    {/if}
+<div class="container">
+  <h2 class="page-title">Post yükle</h2>
+  <div class="section-con">
+    <img class="search-icon" src="/search.svg" alt="" />
+    <!-- <a href="">
+      <img class="arrow-icon" src="/arrow.svg" alt="" />
+    </a> -->
+    <input
+      list="countrydata1"
+      class="section-input"
+      id="country1"
+      name="country1"
+      size="50"
+      autocomplete="off"
+    />
+    <datalist id="countrydata1">
+      <option>Funny</option>
+      <option>Section 2</option>
+      <option>Section 3</option>
+      <option>Section 4</option>
+      <option>Section 5</option>
+      <option>Section 6</option>
+      <option>Section 7</option>
+    </datalist>
   </div>
-  <div class="upload-bar">
-    <div class="item">
-      <img
-        class="upload"
-        src="https://static.thenounproject.com/png/625182-200.png"
-        alt=""
-        on:click={() => {
-          fileinput.click();
-        }}
+  <div class="upload-con">
+    <div class="title-con">
+      <textarea
+        class="title"
+        maxlength="150"
+        name=""
+        id=""
+        cols="30"
+        bind:value={title}
+        rows="3"
+        placeholder="Başlk"
+        contenteditable="true"
       />
-      <div
-        class="chan"
-        on:click={() => {
-          fileinput.click();
-        }}
+      <span class="counter">
+        {!title.length === 0 ? "s" : 150 - title.length}</span
       >
-        Dosya Seç
-      </div>
-      <input
-        style="display:none"
-        type="file"
-        accept=".jpg, .jpeg, .png, .gif"
-        on:change={(e) => onFileSelected(e)}
-        bind:this={fileinput}
-      />
     </div>
 
-    <div class="item">
+    <div class="upload-card">
+      {#if avatar}
+        <img src={avatar} alt="" class="preview" />
+      {:else}
+        <img class="placeholder" src="/placeholder.png" alt="" />
+      {/if}
+      <span class="card-text">Dosya seç ve yükle</span>
       {#if avatar && title}
-        <a href="" on:click={uploadToFireStorage}>
-          <img
-            class="upload"
-            src="https://static.thenounproject.com/png/625182-200.png"
-            alt=""
-          />
+        <!-- svelte-ignore a11y-missing-attribute -->
+        <a class="file-input" on:click={uploadToFireStorage}>
           <div />
           Yükle
         </a>
-      {/if}
+      {:else}
+        <input
+          class="file-input"
+          type="file"
+          directory="false"
+          accept=".jpg, .jpeg, .png, .gif"
+          on:change={(e) => onFileSelected(e)}
+        />
+      {/if} 
+    </div>
+    <div class="tags-con">
+      <input
+        class="tags-input"
+        type="text"
+        placeholder="+ Tag eklemek ister misin? Her tagdan sonra virgül bırak"
+      />
     </div>
   </div>
 </div>
+{#if spinner}
+  <div class="spinner">
+    <Circle3 size="75" color="#FF3E00" unit="px" duration="1.5s" />
+  </div>
+{/if}
 
 <style>
-  input{
-    color: inherit;
+  .container {
+    padding: 32px;
   }
-   h2{
-   font-size: x-large;
-   font-weight: 500;
-   line-height: 1.5;
- }
   .spinner {
     position: absolute;
-    left: 140px;
-    top: 130px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
-  .preview {
-    display: flex;
+  .section-con {
+    padding: 12px;
+    border: 1px solid;
+    width: 50%;
+    border-radius: 10px;
     position: relative;
-    flex-direction: column;
+    margin: 16px 0;
   }
-  .upload-bar {
-    display: flex;
-    justify-content: center;
+  .search-icon {
+    position: absolute;
+    width: 20px;
   }
-  .item {
-    text-align: center;
-    margin: 10px;
+  .arrow-icon {
+    position: absolute;
+    right: 10px;
+    top: 20px;
+    width: 15px;
+  }
+  .section-input {
+    background: none;
+    color: inherit;
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 12px; 
+    padding-left: 25px;
+  }
+  input::-webkit-calendar-picker-indicator {
+    opacity: 100;
+    cursor: pointer;
+  }
+  .title-con {
+    width: 100%;
+    padding: 8px 30px 0px 8px;
+    border: 1px solid;
+    border-radius: 10px;
+    position: relative;
   }
   .title {
-    font-size: 15px;
-    font-weight: 600;
+    background: none;
+    width: 100%;
+    border: none;
+    resize: none;
+    overflow: hidden;
+    outline: none;
+    color: inherit;
+    font-size: 12px;
   }
-  #app {
-    padding-top: 50px;
+  .counter {
+    position: absolute;
+    color: rgba(172, 168, 168, 0.5);
+    top: 50%;
+    transform: translateY(-50%);
+    right: 2px;
+  }
+  .upload-con {
+    border: 1px solid;
+    border-radius: 10px;
     display: flex;
-    align-items: center;
     flex-direction: column;
+    align-items: center;
+    padding: 32px;
   }
-  .upload {
-    width: 50px;
+  .upload-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 16px 16px;
+    padding: 32px;
+    width: 100%;
+    border: 1px solid;
+    border-radius: 10px;
+  }
+  .preview {
+    width: 100%;
+  }
+  @media (max-width: 500px) {
+    .preview {
+      width: 120%;
+    }
+  }
+  .placeholder {
+    width: 70px;
+  }
+  .card-text {
+    margin: 16px 0 16px;
+  }
+  .file-input::-webkit-file-upload-button {
+    visibility: hidden;
+  }
+  .file-input {
+    content: "Select some files";
+    width: 225px;
+    background: #0077ff;
+    color: white;
+    padding: 8px 25px;
+    font-size: 12px;
+    border-radius: 20px;
+    letter-spacing: 1px;
     cursor: pointer;
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid transparent;
+    text-indent: -50px;
   }
-  .chan {
-    cursor: pointer;
+  .tags-con {
+    padding: 12px;
+    border: 1px solid;
+    border-radius: 10px;
+    position: relative;
+    margin: 16px 0;
+    width: 100%;
   }
-  .avatar {
-    width: 350px;
+  .tags-input {
+    background: none;
+    color: inherit;
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 12px;
   }
 </style>

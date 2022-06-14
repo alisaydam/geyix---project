@@ -12,7 +12,7 @@
       return ($shown = true);
     }
     const submit = await fetch(
-      `http://localhost:5000/like/likeComment/${user.username}/${commentid}`
+      `https://geyix.herokuapp.com/like/likeComment/${user.username}/${commentid}`
     );
     const data = await submit.json();
     comment = data;
@@ -22,7 +22,7 @@
       return ($shown = true);
     }
     const submit = await fetch(
-      `http://localhost:5000/like/dislikeComment/${user.username}/${commentid}`
+      `https://geyix.herokuapp.com/like/dislikeComment/${user.username}/${commentid}`
     );
     const data = await submit.json();
     comment = data;
@@ -30,7 +30,7 @@
 
   const submitSubComment = async () => {
     const subComment = document.getElementById("textArea").value;
-    const submit = await fetch("http://localhost:5000/comment/newSubComment", {
+    const submit = await fetch("https://geyix.herokuapp.com/comment/newSubComment", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -57,6 +57,7 @@
     const subDiv = document.createElement("div");
     subDiv.id = "comment-div";
     subDiv.style.cssText = "display: flex;";
+    subDiv.classList.add("fade-in")
     const submitArea = document.createElement("textarea");
     submitArea.id = "textArea";
     const submitButton = document.createElement("button");
@@ -124,21 +125,7 @@
     on:click|preventDefault={openSubmit}
     id={comment._id}
   >
-  <svg
-  xmlns="http://www.w3.org/2000/svg"
-  width="12"
-  height="12"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2.5"
-  stroke-linecap="round"
-  stroke-linejoin="round"
-  class="feather feather-message-square"
-  ><path
-    d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
-  /></svg
->
+    <img src="/ftcomment.svg" alt="s" srcset="" />
     <span class="vote-button">{comment.subComments.subComments.length}</span
     ><button />
   </button>
@@ -173,9 +160,7 @@
 
   img {
     margin: 2px;
-    width: 14px;
-    filter: invert(94%) sepia(0%) saturate(1574%) hue-rotate(185deg)
-      brightness(114%) contrast(60%);
+    width: 20px; 
   }
 
   @media (max-width: 450px) {

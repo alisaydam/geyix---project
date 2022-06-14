@@ -3,10 +3,8 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import routes from "./routes/index.js";
 dotenv.config();
-import nodemailer from "nodemailer";
-
-
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -18,16 +16,12 @@ mongoose
     console.log("Could not connect to DB");
   });
 
-import routes from "./routes/index.js";
-dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.set("view engine", "ejs");
- 
-
 
 app.use("/", routes);
 

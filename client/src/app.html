@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="description" content="" />
-	<link rel="icon" />
+	<link rel="icon" href="%svelte.assets%/favicon.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>Geyix</title>
 	%svelte.head%
@@ -17,13 +17,19 @@
 
 </html>
 <style>
-	.dark {
+ 	.dark {
 		background: #333;
-		color: #cccccc;
+		color: #fff;
+		--bg: var(--black)
 	}
 
 	.light {
 		background: white;
-		color: rgb(97, 97, 97);
+		--bg: var(--white);
+		 color: rgb(97, 97, 97);
+	}
+	body {
+		max-width: 650px;
+		margin: 0 auto;
 	}
 </style>
